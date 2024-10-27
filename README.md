@@ -40,8 +40,7 @@ Este projeto utiliza o algoritmo K-Nearest Neighbors Classifier para analisar e 
 
 1. **Clone o Repositório**:
    ```bash
-   git clone https://github.com/seu-usuario/seu-repositorio.git
-   cd seu-repositorio
+   git clone https://github.com/yasmincsouza/kNN-analise-credito-instituicao-financeira
 
 2. **Instale as Dependências**:
    ```bash

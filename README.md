@@ -47,4 +47,5 @@ Este projeto utiliza o algoritmo K-Nearest Neighbors Classifier para analisar e 
    pip install numpy pandas matplotlib seaborn scikit-learn missingno
 
 2. **Execute o Script**:
+   ```bash
    python kNN_analise_credito.py

@@ -4,13 +4,10 @@ import numpy as np
 import pandas as pd 
 import matplotlib.pyplot as plt
 import seaborn as sns
-import missingno as msno
 
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OrdinalEncoder, StandardScaler
-from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import OrdinalEncoder
 from sklearn.impute import KNNImputer
-from sklearn.neighbors import KNeighborsClassifier
 
 # Lendo o arquivo credit_risk_dataset.csv utilizando a biblioteca pandas
 try:
@@ -21,77 +18,25 @@ except FileNotFoundError:
     print("Arquivo CSV não encontrado!")
 
 # Verificar como estão os dados das primeiras entradas de cada coluna
+print("\n")
 print("#### Dados das primeiras entradas de cada coluna ####")
 print(dados.head())
 
-# Resumo visão geral dos dados e compreender suas características.
-print("####################")
+# Tipos de dados e contagem de entradas.
+print("\n")
+print("#### Visão Geral dos Dados ####")
 print(dados.info())
 
-## Algumas colunas contêm dados categóricos. Para treinar ainda mais o modelo, precisamos nos livrar delas.
-print("##########Propriedade da casa##########")
-print(dados['person_home_ownership'].value_counts())
-print("##########Intenção de empréstimo##########")
-print(dados['loan_intent'].value_counts())
-print("##########Grau de Empréstimo##########")
-print(dados['loan_grade'].value_counts())
-print("##########Inadimplência histórica##########")
-print(dados['cb_person_default_on_file'].value_counts())
-
-def visualizaoDados():
-    plt.figure(figsize=(10,6))
-    sns.barplot(x=dados['person_age'].unique(), y=dados['person_age'].value_counts())
-    plt.xticks(rotation=90)
-    plt.title('Age')
-    plt.show()
-
-    plt.figure(figsize=(10,6))
-    sns.barplot(x=dados['person_home_ownership'].unique(), y=dados['person_home_ownership'].value_counts())
-    plt.title('Availability of housing')
-    plt.show()
-
-    plt.figure(figsize=(10,6))
-    sns.barplot(x=dados['loan_grade'].unique(), y=dados['loan_grade'].value_counts())
-    plt.title('Loan grade')
-    plt.show()
-
-    plt.figure(figsize=(10,6))
-    sns.barplot(x=dados["person_income"],y=dados["loan_intent"])
-    plt.title("Relationship between loan goals and person income")
-    plt.show()
-
-    plt.figure(figsize=(10,6))
-    sns.barplot(x=dados["loan_amnt"],y=dados["loan_intent"])
-    plt.title("Relationship between loan goals and loan amount")
-    plt.show()
-
-    plt.figure(figsize=(10,6))
-    sns.countplot(data = dados, x = 'loan_grade', hue = 'loan_status')
-    plt.title("Relationship between loan grade and loan status")
-    plt.show()
-
-    plt.figure(figsize=(10,6))
-    sns.countplot(data = dados, x = 'person_home_ownership', hue = 'loan_status')
-    plt.title("Relationship between home ownership and loan status")
-    plt.show()
-
-    plt.figure(figsize=(10,6))
-    sns.countplot(data = dados, x = 'loan_intent', hue = 'loan_status')
-    plt.xticks(rotation=90)
-    plt.title("Relationship between loan goals and loan status")
-    plt.show()
-
-    plt.figure(figsize=(10,6))
-    plt.pie(dados['loan_status'].value_counts(), labels=['N', 'Y'], autopct='%1.1f%%')
-    plt.title("Loan status")
-    plt.show()
-
-print("####################")
+print("\n")
+print("#### Verificar valores ausentes ####")
 print(dados.isna().sum())
 
-print("####################")
+print("\n")
+print("#### Verificar valores duplicados ####")
 print(dados.duplicated().sum())
-
+      
+## Algumas colunas contêm dados categóricos, então é preciso fazer uma limpeza e tranformação desses dados
+# Remove todas as linhas do dataframe onde a idade é maior que 100
 dados = dados.drop(dados[dados['person_age'] > 100].index)
 
 ord_enc = OrdinalEncoder()
@@ -100,24 +45,11 @@ dados['person_home_ownership'] = ord_enc.fit_transform(dados[['person_home_owner
 dados['loan_intent'] = ord_enc.fit_transform(dados[['loan_intent']])
 dados['loan_grade'] = ord_enc.fit_transform(dados[['loan_grade']])
 dados['cb_person_default_on_file'] = ord_enc.fit_transform(dados[['cb_person_default_on_file']])
-dados.drop_duplicates(inplace=True)
+dados.drop_duplicates(inplace=True) # Remove duplicatas
 
+# Cria uma copia dos dados e preenche os valores ausentes com a média da coluna person_emp_length
 df1 = dados.copy()
 df1['person_emp_length'] = df1['person_emp_length'].fillna(df1['person_emp_length'].mean())
-
-fig, axes = plt.subplots(2, 2,figsize=(16,10))
-
-axes[0,0].set_title('Employment length boxplot')
-axes[0,1].set_title('Employment length distribution plot')
-axes[1,0].set_title('Employment length boxplot after imputation')
-axes[1,1].set_title('Employment length distribution plot after imputation')
-
-sns.boxplot(ax=axes[0,0], data=dados['person_emp_length'], orient='h')
-sns.histplot(ax=axes[0,1], data=dados['person_emp_length'])
-sns.boxplot(ax=axes[1,0], data=df1['person_emp_length'], orient='h')
-sns.histplot(ax=axes[1,1], data=df1['person_emp_length'])
-
-# plt.show()
 
 dados = df1
 
@@ -128,11 +60,64 @@ y = dados['loan_status']
 # 5 vizinhos mais próximos
 imp = KNNImputer(n_neighbors=5)
 X_imp = imp.fit_transform(X)
-
 X1 = pd.DataFrame(X_imp, columns=X.columns)
+
+# Garante que apenas os valores ausentes foram preenchidos
 X1.shape
 X.shape
-
 X = X1
+
+# Exibe estatísticas descritivas (média, desvio padrão, valores mínimos e máximos)
+print("\n")
 print(X.isna().sum())
+print("\n")
 print(X.describe())
+print("\n")
+
+def graficosDados():
+    plt.figure(figsize=(10,6))
+    sns.barplot(x=dados['person_age'].unique(), y=dados['person_age'].value_counts())
+    plt.xticks(rotation=90)
+    plt.title('Idade')
+    plt.show()
+
+    legenda_loan_grade = {'0.0': 'A', '1.0': 'B', '2.0': 'C', '3.0': 'D', '4.0': 'E', '5.0': 'F', '6.0': 'G'}
+    plt.figure(figsize=(10,6))
+    sns.barplot(x=dados['loan_grade'].unique(), y=dados['loan_grade'].value_counts())
+    plt.title('Grau de Empréstimo')
+    # Alterar os rótulos do eixo x
+    plt.xticks(ticks=range(len(legenda_loan_grade)), labels=list(legenda_loan_grade.values()))
+    plt.show()
+
+    legenda_loan_intent = {'0.0': 'Pessoal', '1.0': 'Educação', '2.0': 'Médico', '3.0': 'Empreendimento', '4.0': 'Reforma Casa', '5.0': 'Consolidação Dívidas'}
+    plt.figure(figsize=(10,6))
+    sns.countplot(data = dados, x = 'loan_intent', hue = 'loan_status')
+    plt.xticks(rotation=90)
+    plt.title("Relação entre objetivos de empréstimo e status de empréstimo")
+    plt.xlabel("Objetivos de empréstimo (loan_intent)")
+    # Alterar os rótulos do eixo x
+    plt.xticks(ticks=range(len(legenda_loan_intent)), labels=list(legenda_loan_intent.values()), rotation=0)
+    # Alterar o título da legenda (loan_status)
+    handles, labels = plt.gca().get_legend_handles_labels()
+    plt.legend(handles, ['Adimplente' if label == '0' else 'Inadimplente' for label in labels], title='Situação do Empréstimo')
+    plt.show()
+
+    plt.figure(figsize=(10,6))
+    plt.pie(dados['loan_status'].value_counts(), labels=['Negado', 'Aprovado'], autopct='%1.1f%%')
+    plt.title("Proporção de empréstimos aprovados e negados")
+    plt.show()
+
+    # legenda_loan_grade = {'0.0': 'A', '1.0': 'B', '2.0': 'C', '3.0': 'D', '4.0': 'E', '5.0': 'F', '6.0': 'G'}
+    plt.figure(figsize=(12, 6))
+    sns.boxplot(x='loan_grade', y='loan_percent_income', hue='loan_status', data=dados, palette=['#4C72B0', '#C44E52'])
+    plt.title("Distribuição do Percentual da Renda por Nota de Crédito e Status do Empréstimo")
+    plt.xlabel("Grau de Empréstimo (loan_grade)")
+    plt.ylabel("Percentual da Renda (loan_percent_income)")
+    # Alterar os rótulos do eixo x
+    plt.xticks(ticks=range(len(legenda_loan_grade)), labels=list(legenda_loan_grade.values()))
+    # Alterar o título da legenda (loan_status)
+    handles, labels = plt.gca().get_legend_handles_labels()
+    plt.legend(handles, ['Adimplente' if label == '0' else 'Inadimplente' for label in labels], title='Situação do Empréstimo')
+    plt.show()
+
+graficosDados()

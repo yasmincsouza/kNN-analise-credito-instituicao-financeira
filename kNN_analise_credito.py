@@ -1,30 +1,36 @@
 # KNeighborsClassifier para Análise de Concessão de Crédito em Instituições Financeiras
 # Importando as bibliotecas necessárias
-import numpy as np
 import pandas as pd 
 import matplotlib.pyplot as plt
-import seaborn as sns
-import missingno as msno
 import pre_processamento
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OrdinalEncoder
-from sklearn.impute import KNNImputer
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, roc_auc_score, classification_report
 
-X_train, X_test, y_train, y_test = train_test_split(pre_processamento.X, pre_processamento.y, test_size=0.2, random_state=42)
+dataP = pre_processamento
+
+# Divide os dados em conjuntos de treinamento (80%) e teste (20%).
+X_train, X_test, y_train, y_test = train_test_split(dataP.X, dataP.y, test_size=0.2, random_state=42)
 
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
+# Considera 6 vizinhos mais próximos.
 KNC = KNeighborsClassifier(n_neighbors=6)
 KNC.fit(X_train, y_train)
 
 y_pred = KNC.predict(X_test)
 y_prob = KNC.predict_proba(X_test)[:, 1]
 
-############################################################
+accuracy = accuracy_score(y_test, y_pred) # Porcentagem de previsões corretas
+auc = roc_auc_score(y_test, y_prob) # Métrica de desempenho
+report = classification_report(y_test, y_pred) # Relatório com métricas como precisão, recall e F1-score.
+    
+print(report)
+
 print("\n")
 print("######################################## Input de Novos Clientes ########################################")
 # Lendo o arquivo credit_risk_dataset.csv utilizando a biblioteca pandas

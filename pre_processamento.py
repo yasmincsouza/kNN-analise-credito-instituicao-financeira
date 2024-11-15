@@ -12,7 +12,7 @@ from sklearn.impute import KNNImputer
 # Lendo o arquivo credit_risk_dataset.csv utilizando a biblioteca pandas
 try:
     # dados = pd.read_csv('analise_credito.csv')
-    dados = pd.read_csv('dados/credit_risk_dataset.csv')
+    dados = pd.read_csv('dataset/credit_risk_dataset.csv')
     print("Arquivo CSV carregado com sucesso!")
 except FileNotFoundError:
     print("Arquivo CSV não encontrado!")

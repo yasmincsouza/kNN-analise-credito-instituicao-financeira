@@ -35,7 +35,7 @@ print("\n")
 print("######################################## Input de Novos Clientes ########################################")
 # Lendo o arquivo credit_risk_dataset.csv utilizando a biblioteca pandas
 try:
-    dados_novos = pd.read_csv('dados/novos_clientes.csv')
+    dados_novos = pd.read_csv('dataset/novos_clientes.csv')
     print("Arquivo CSV carregado com sucesso!")
 except FileNotFoundError:
     print("Arquivo CSV não encontrado!")

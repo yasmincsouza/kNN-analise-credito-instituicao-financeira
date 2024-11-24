@@ -2,6 +2,8 @@
 
 Este projeto utiliza o algoritmo K-Nearest Neighbors Classifier para analisar e prever a concessão de crédito em instituições financeiras. O modelo é treinado usando um conjunto de dados que inclui informações sobre os solicitantes de crédito, como idade, propriedade da casa, intenção de empréstimo e histórico de inadimplência.
 
+Para realizar as análises, utilizou-se o `Credit Risk Dataset` disponibilizado por Lao Tse na plataforma **Kaggle**.
+
 ## Tecnologias Utilizadas
 
 - Python

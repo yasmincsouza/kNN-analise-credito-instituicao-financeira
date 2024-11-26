@@ -99,7 +99,7 @@ def graficosDados():
     plt.xticks(ticks=range(len(legenda_loan_grade)), labels=list(legenda_loan_grade.values()), rotation=0)
     # Alterar o título da legenda (loan_status)
     handles, labels = plt.gca().get_legend_handles_labels()
-    plt.legend(handles, ['Adimplente' if label == '0' else 'Inadimplente' for label in labels], title='Situação do Empréstimo')
+    plt.legend(handles, ['Adimplente' if label == '0' else 'Inadimplente' for label in labels], title='Clientes')
     plt.show()
 
 graficosDados()

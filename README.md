@@ -44,7 +44,7 @@ Para realizar as análises, utilizou-se o `Credit Risk Dataset` disponibilizado 
    ```bash
    git clone https://github.com/yasmincsouza/kNN-analise-credito-instituicao-financeira
 
-2. **Instale as Dependências**:
+2. **No terminal, instale as Dependências**:
    ```bash
    pip install numpy pandas matplotlib seaborn scikit-learn missingno
 
